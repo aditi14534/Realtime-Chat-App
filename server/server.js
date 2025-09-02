@@ -13,7 +13,11 @@ const server = http.createServer(app);
 
 // Initialize socket.io server
 export const io = new Server(server, {
-  cors: { origin: "*" },
+  cors: {
+    origin: "https://realtime-chat-app-frontend-one.vercel.app", // frontend ka URL
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
+    credentials: true,
+  },
 });
 
 // Store online users

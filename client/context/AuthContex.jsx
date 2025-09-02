@@ -48,7 +48,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Logout function to handle user logout and socket disconnection
+  // Logout function
   const logout = async () => {
     localStorage.removeItem("token");
     setToken(null);
@@ -56,10 +56,10 @@ export const AuthProvider = ({ children }) => {
     setOnlineUsers([]);
     axios.defaults.headers.common["token"] = null;
     toast.success("Logged out successfully");
-    socket.disconnect();
+    socket?.disconnect();
   };
 
-  // Update profile function to handle user profile updates
+  // Update profile
   const updateProfile = async (body) => {
     try {
       const { data } = await axios.put("/api/auth/update-profile", body);
@@ -72,17 +72,16 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Connect socket function to handle socket connection and online users updates
+  // Connect socket
   const connectSocket = (userData) => {
     if (!userData || socket?.connected) return;
 
     const newSocket = io(backendUrl, {
-      query: {
-        userId: userData._id,
-      },
+      query: { userId: userData._id },
+      transports: ["websocket"], // ✅ force websocket only
+      withCredentials: true,
     });
 
-    newSocket.connect();
     setSocket(newSocket);
 
     newSocket.on("getOnlineUsers", (userIds) => {
